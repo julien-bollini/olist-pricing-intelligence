@@ -10,7 +10,6 @@ __pycache__/
 
 # Data 
 data/
-outputs/
 
 # Misc
 .DS_Store
