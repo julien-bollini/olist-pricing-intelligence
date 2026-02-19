@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olist Pricing Intelligence — Dashboard Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:        #0F1117;
+    --surface:   #1A1D27;
+    --surface2:  #222636;
+    --border:    #2E3347;
+    --text:      #E8EAF0;
+    --muted:     #7A80A0;
+    --orange:    #E69F00;
+    --blue:      #56B4E9;
+    --green:     #009E73;
+    --red:       #D55E00;
+    --purple:    #CC79A7;
+    --bluedark:  #0072B2;
+    --yellow:    #F0E442;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-title { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .header-right { display: flex; gap: 8px; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 10px 28px 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all .2s;
+    border: 1px solid transparent;
+    border-bottom: none;
+    position: relative; bottom: -1px;
+  }
+  .tab:hover  { color: var(--text); background: var(--surface2); }
+  .tab.active {
+    color: var(--text);
+    background: var(--bg);
+    border-color: var(--border);
+  }
+
+  /* ── Layout ── */
+  .page { display: none; padding: 20px 28px; }
+  .page.active { display: block; }
+
+  /* ── Filter bar ── */
+  .filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .filter-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+    background: var(--surface);
+  }
+  .filter-chip:hover, .filter-chip.active {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(230,159,0,.08);
+  }
+
+  /* ── KPI Cards ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent, var(--orange));
+    border-radius: 10px 10px 0 0;
+  }
+  .kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+  .kpi-value { font-size: 26px; font-weight: 700; margin: 6px 0 4px; letter-spacing: -1px; }
+  .kpi-delta { font-size: 11px; font-weight: 500; }
+  .kpi-delta.up   { color: var(--green); }
+  .kpi-delta.down { color: var(--red); }
+
+  /* ── Grid layouts ── */
+  .grid-2  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-12 { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; margin-bottom: 14px; }
+
+  /* ── Chart card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .card-title {
+    font-size: 12px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: .5px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-title span { color: var(--text); }
+
+  /* ── Bar chart ── */
+  .bar-chart { display: flex; flex-direction: column; gap: 7px; }
+  .bar-row   { display: flex; align-items: center; gap: 8px; }
+  .bar-label { font-size: 11px; color: var(--muted); width: 150px; text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 18px; background: var(--surface2); border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-fill  { height: 100%; border-radius: 4px; transition: width 1s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+  .bar-val   { font-size: 10px; font-weight: 600; color: var(--bg); white-space: nowrap; }
+
+  /* ── Line chart (SVG) ── */
+  .chart-svg { width: 100%; overflow: visible; }
+
+  /* ── Donut ── */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item  { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+  .legend-dot   { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-pct   { color: var(--muted); margin-left: auto; padding-left: 12px; font-family: 'DM Mono', monospace; font-size: 10px; }
+
+  /* ── Scatter ── */
+  .scatter-wrap { position: relative; }
+
+  /* ── Table ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .data-table th {
+    text-align: left; padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted); font-weight: 600;
+    text-transform: uppercase; letter-spacing: .4px; font-size: 10px;
+  }
+  .data-table td { padding: 7px 10px; border-bottom: 1px solid rgba(46,51,71,.5); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface2); }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 10px; font-weight: 600;
+  }
+  .badge-green  { background: rgba(0,158,115,.15); color: var(--green); }
+  .badge-red    { background: rgba(213,94,0,.15);  color: var(--red); }
+  .badge-orange { background: rgba(230,159,0,.15); color: var(--orange); }
+  .badge-blue   { background: rgba(86,180,233,.15); color: var(--blue); }
+  .badge-gray   { background: rgba(122,128,160,.15); color: var(--muted); }
+
+  /* ── Heatmap ── */
+  .heatmap-wrap { overflow-x: auto; }
+  .heatmap-table { border-collapse: collapse; font-size: 10px; width: 100%; }
+  .heatmap-table th { padding: 4px 8px; color: var(--muted); font-weight: 600; text-align: center; }
+  .heatmap-table td { padding: 5px 8px; text-align: center; border: 1px solid var(--border); font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; border-radius: 3px; }
+  .hm-pos-hi  { background: rgba(0,158,115,.5);  color: #fff; }
+  .hm-pos-mid { background: rgba(0,158,115,.25); color: var(--green); }
+  .hm-pos-low { background: rgba(0,158,115,.10); color: var(--green); }
+  .hm-neg-hi  { background: rgba(213,94,0,.5);   color: #fff; }
+  .hm-neg-mid { background: rgba(213,94,0,.25);  color: var(--red); }
+  .hm-neg-low { background: rgba(213,94,0,.10);  color: var(--red); }
+  .hm-zero    { background: var(--surface2); color: var(--muted); }
+
+  /* ── Elasticity bar ── */
+  .elast-row  { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .elast-cat  { font-size: 10px; width: 140px; text-align: right; color: var(--muted); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .elast-track { flex: 1; height: 16px; background: var(--surface2); border-radius: 4px; position: relative; }
+  .elast-zero  { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--border); }
+  .elast-bar   { position: absolute; top: 2px; bottom: 2px; border-radius: 3px; }
+  .elast-val   { font-size: 10px; font-family: 'DM Mono', monospace; font-weight: 600; width: 40px; flex-shrink: 0; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center; padding: 16px;
+    font-size: 10px; color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .footer a { color: var(--orange); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">📦</div>
+    <div>
+      <div class="header-title">Olist Pricing Intelligence</div>
+      <div class="header-sub">Dashboard mockup · Données 2017–2018 · Palette Okabe-Ito</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div style="font-size:11px;color:var(--muted);padding:6px 12px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);">
+      🗓 Jan 2017 — Août 2018
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showPage(0)">📈 Performance Produits</div>
+  <div class="tab" onclick="showPage(1)">💰 Pricing & Concurrence</div>
+  <div class="tab" onclick="showPage(2)">📐 Élasticité & Recommandations</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 1 — PERFORMANCE PRODUITS                              -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-0">
+
+  <div class="filters">
+    <span class="filter-label">FILTRES :</span>
+    <div class="filter-chip active">Toutes années</div>
+    <div class="filter-chip">2017</div>
+    <div class="filter-chip">2018</div>
+    <div class="filter-chip active" style="margin-left:8px">Toutes catégories</div>
+    <div class="filter-chip">Health Beauty</div>
+    <div class="filter-chip">Computers</div>
+    <div class="filter-chip">Sports Leisure</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi" style="--accent:var(--orange)">
+      <div class="kpi-label">CA Total</div>
+      <div class="kpi-value" style="color:var(--orange)">1.35 M€</div>
+      <div class="kpi-delta up">▲ +23.4% vs période préc.</div>
+    </div>
+    <div class="kpi" style="--accent:var(--green)">
+      <div class="kpi-label">Marge Totale Estimée</div>
+      <div class="kpi-value" style="color:var(--green)">607 k€</div>
+      <div class="kpi-delta up">▲ Taux : 45.0%</div>
+    </div>
+    <div class="kpi" style="--accent:var(--blue)">
+      <div class="kpi-label">Nb Commandes</div>
+      <div class="kpi-value" style="color:var(--blue)">96 478</div>
+      <div class="kpi-delta up">▲ +18.1% MoM</div>
+    </div>
+    <div class="kpi" style="--accent:var(--purple)">
+      <div class="kpi-label">Panier Moyen</div>
+      <div class="kpi-value" style="color:var(--purple)">14.0 €</div>
+      <div class="kpi-delta down">▼ -1.2% vs mois préc.</div>
+    </div>
+  </div>
+
+  <!-- Row 1 -->
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-title">📊 <span>CA par Catégorie (Top 10)</span></div>
+      <div class="bar-chart">
+        <div class="bar-row"><div class="bar-label">Health Beauty</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--orange)"><span class="bar-val">148 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Computers Access.</div><div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--blue)"><span class="bar-val">130 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Sports Leisure</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--green)"><span class="bar-val">118 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Furniture Decor</div><div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--bluedark)"><span class="bar-val">105 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Watches Gifts</div><div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--purple)"><span class="bar-val">95 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Housewares</div><div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--orange)"><span class="bar-val">86 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Bed Bath Table</div><div class="bar-track"><div class="bar-fill" style="width:52%;background:var(--blue)"><span class="bar-val">77 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Toys</div><div class="bar-track"><div class="bar-fill" style="width:44%;background:var(--green)"><span class="bar-val">65 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Auto</div><div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--red)"><span class="bar-val">55 k€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Telephony</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--muted)"><span class="bar-val">44 k€</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🍩 <span>Segments de Prix</span></div>
+      <div class="donut-wrap">
+        <svg width="110" height="110" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--surface2)" stroke-width="8"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--orange)"  stroke-width="8" stroke-dasharray="40 60" stroke-dashoffset="25"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--blue)"    stroke-width="8" stroke-dasharray="30 70" stroke-dashoffset="-15"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--green)"   stroke-width="8" stroke-dasharray="15 85" stroke-dashoffset="-45"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--bluedark)"stroke-width="8" stroke-dasharray="10 90" stroke-dashoffset="-60"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--red)"     stroke-width="8" stroke-dasharray="5 95"  stroke-dashoffset="-70"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>< 8.5€<span class="legend-pct">40%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>8.5–25.5€<span class="legend-pct">30%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>25.5–51€<span class="legend-pct">15%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--bluedark)"></div>51–85€<span class="legend-pct">10%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>> 85€<span class="legend-pct">5%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 : Line chart + table -->
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-title">📈 <span>Évolution Mensuelle CA & Marge</span></div>
+      <svg class="chart-svg" height="140" viewBox="0 0 600 140">
+        <defs>
+          <linearGradient id="ca-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E69F00" stop-opacity=".3"/>
+            <stop offset="100%" stop-color="#E69F00" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="mg-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#009E73" stop-opacity=".3"/>
+            <stop offset="100%" stop-color="#009E73" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="0" y1="20"  x2="600" y2="20"  stroke="#2E3347" stroke-width=".5"/>
+        <line x1="0" y1="60"  x2="600" y2="60"  stroke="#2E3347" stroke-width=".5"/>
+        <line x1="0" y1="100" x2="600" y2="100" stroke="#2E3347" stroke-width=".5"/>
+        <line x1="0" y1="130" x2="600" y2="130" stroke="#2E3347" stroke-width=".5"/>
+        <!-- CA fill -->
+        <path fill="url(#ca-grad)" d="M30,120 L85,105 L140,95 L195,80 L250,70 L305,55 L360,42 L415,35 L470,28 L525,22 L580,20 L580,130 L30,130 Z"/>
+        <!-- CA line -->
+        <polyline fill="none" stroke="#E69F00" stroke-width="2.5" stroke-linejoin="round"
+          points="30,120 85,105 140,95 195,80 250,70 305,55 360,42 415,35 470,28 525,22 580,20"/>
+        <!-- Marge fill -->
+        <path fill="url(#mg-grad)" d="M30,128 L85,120 L140,112 L195,100 L250,92 L305,79 L360,68 L415,62 L470,56 L525,51 L580,49 L580,130 L30,130 Z"/>
+        <!-- Marge line -->
+        <polyline fill="none" stroke="#009E73" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"
+          points="30,128 85,120 140,112 195,100 250,92 305,79 360,68 415,62 470,56 525,51 580,49"/>
+        <!-- Dots CA -->
+        <circle cx="580" cy="20" r="4" fill="#E69F00"/>
+        <!-- Labels -->
+        <text x="30"  y="138" fill="#7A80A0" font-size="8" text-anchor="middle" font-family="DM Sans">Jan'17</text>
+        <text x="195" y="138" fill="#7A80A0" font-size="8" text-anchor="middle" font-family="DM Sans">Juin'17</text>
+        <text x="360" y="138" fill="#7A80A0" font-size="8" text-anchor="middle" font-family="DM Sans">Jan'18</text>
+        <text x="580" y="138" fill="#7A80A0" font-size="8" text-anchor="middle" font-family="DM Sans">Août'18</text>
+        <!-- Legend -->
+        <rect x="400" y="5" width="10" height="3" fill="#E69F00" rx="1"/>
+        <text x="414" y="9" fill="#E8EAF0" font-size="8" font-family="DM Sans">CA (€)</text>
+        <line x1="450" y1="7" x2="460" y2="7" stroke="#009E73" stroke-width="2" stroke-dasharray="3,2"/>
+        <text x="464" y="9" fill="#E8EAF0" font-size="8" font-family="DM Sans">Marge (€)</text>
+      </svg>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 <span>Top 5 Catégories</span></div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Catégorie</th><th>CA</th><th>Marge</th><th>Tx marge</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Health Beauty</td><td>148 k€</td><td>66 k€</td><td><span class="badge badge-green">45%</span></td></tr>
+          <tr><td>Computers</td><td>130 k€</td><td>58 k€</td><td><span class="badge badge-green">45%</span></td></tr>
+          <tr><td>Sports Leisure</td><td>118 k€</td><td>53 k€</td><td><span class="badge badge-orange">45%</span></td></tr>
+          <tr><td>Furniture Decor</td><td>105 k€</td><td>47 k€</td><td><span class="badge badge-orange">45%</span></td></tr>
+          <tr><td>Watches Gifts</td><td>95 k€</td><td>43 k€</td><td><span class="badge badge-blue">45%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 2 — PRICING & CONCURRENCE                             -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-1">
+
+  <div class="filters">
+    <span class="filter-label">FILTRES :</span>
+    <div class="filter-chip active">Tous trimestres</div>
+    <div class="filter-chip">T1</div><div class="filter-chip">T2</div>
+    <div class="filter-chip">T3</div><div class="filter-chip">T4</div>
+    <div class="filter-chip active" style="margin-left:8px">Tous états</div>
+    <div class="filter-chip">SP</div><div class="filter-chip">RJ</div><div class="filter-chip">MG</div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi" style="--accent:var(--blue)">
+      <div class="kpi-label">Prix Moyen</div>
+      <div class="kpi-value" style="color:var(--blue)">14.0 €</div>
+      <div class="kpi-delta up">▲ Médiane : 9.3 €</div>
+    </div>
+    <div class="kpi" style="--accent:var(--orange)">
+      <div class="kpi-label">Fret Moyen</div>
+      <div class="kpi-value" style="color:var(--orange)">3.0 €</div>
+      <div class="kpi-delta">Ratio : 18%</div>
+    </div>
+    <div class="kpi" style="--accent:var(--green)">
+      <div class="kpi-label">Score Satisfaction</div>
+      <div class="kpi-value" style="color:var(--green)">4.20<span style="font-size:14px">/5</span></div>
+      <div class="kpi-delta up">▲ 63% scores ≥ 4</div>
+    </div>
+    <div class="kpi" style="--accent:var(--purple)">
+      <div class="kpi-label">Taux Versements</div>
+      <div class="kpi-value" style="color:var(--purple)">52%</div>
+      <div class="kpi-delta">des achats en plusieurs fois</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">💲 <span>Prix Moyen vs Médian par Catégorie</span></div>
+      <div class="bar-chart">
+        <div style="display:flex;gap:12px;margin-bottom:8px;font-size:10px">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--blue);border-radius:2px;display:inline-block"></span>Moyen</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--orange);border-radius:2px;display:inline-block"></span>Médian</span>
+        </div>
+        <div class="bar-row"><div class="bar-label">Watches Gifts</div><div class="bar-track"><div class="bar-fill" style="width:82%;background:var(--blue)"><span class="bar-val">41€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label" style="color:transparent">-</div><div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--orange)"><span class="bar-val">29€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Computers</div><div class="bar-track"><div class="bar-fill" style="width:76%;background:var(--blue)"><span class="bar-val">38€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label" style="color:transparent">-</div><div class="bar-track"><div class="bar-fill" style="width:52%;background:var(--orange)"><span class="bar-val">26€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label">Furniture Decor</div><div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--blue)"><span class="bar-val">34€</span></div></div></div>
+        <div class="bar-row"><div class="bar-label" style="color:transparent">-</div><div class="bar-track"><div class="bar-fill" style="width:46%;background:var(--orange)"><span class="bar-val">23€</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💳 <span>Modes de Paiement</span></div>
+      <div class="donut-wrap">
+        <svg width="110" height="110" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--surface2)" stroke-width="8"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--blue)"     stroke-width="8" stroke-dasharray="74 26" stroke-dashoffset="25"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--orange)"   stroke-width="8" stroke-dasharray="19 81" stroke-dashoffset="-49"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--green)"    stroke-width="8" stroke-dasharray="5 95"  stroke-dashoffset="-68"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--muted)"    stroke-width="8" stroke-dasharray="2 98"  stroke-dashoffset="-73"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Carte crédit<span class="legend-pct">74%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Boleto<span class="legend-pct">19%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Carte débit<span class="legend-pct">5%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Voucher<span class="legend-pct">2%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🗓 <span>Saisonnalité du Prix Moyen (par mois)</span></div>
+      <svg class="chart-svg" height="120" viewBox="0 0 520 120">
+        <line x1="0" y1="100" x2="520" y2="100" stroke="#2E3347" stroke-width=".5"/>
+        <line x1="0" y1="60"  x2="520" y2="60"  stroke="#2E3347" stroke-width=".5"/>
+        <line x1="0" y1="20"  x2="520" y2="20"  stroke="#2E3347" stroke-width=".5"/>
+        <!-- Bars -->
+        <rect x="5"   y="62" width="32" height="38" fill="#56B4E9" rx="3"/>
+        <rect x="48"  y="58" width="32" height="42" fill="#56B4E9" rx="3"/>
+        <rect x="91"  y="54" width="32" height="46" fill="#E69F00" rx="3"/>
+        <rect x="134" y="50" width="32" height="50" fill="#E69F00" rx="3"/>
+        <rect x="177" y="46" width="32" height="54" fill="#E69F00" rx="3"/>
+        <rect x="220" y="42" width="32" height="58" fill="#009E73" rx="3"/>
+        <rect x="263" y="38" width="32" height="62" fill="#009E73" rx="3"/>
+        <rect x="306" y="34" width="32" height="66" fill="#009E73" rx="3"/>
+        <rect x="349" y="52" width="32" height="48" fill="#56B4E9" rx="3"/>
+        <rect x="392" y="55" width="32" height="45" fill="#56B4E9" rx="3"/>
+        <rect x="435" y="50" width="32" height="50" fill="#E69F00" rx="3"/>
+        <rect x="478" y="44" width="32" height="56" fill="#E69F00" rx="3"/>
+        <!-- Moyenne line -->
+        <line x1="0" y1="52" x2="520" y2="52" stroke="#D55E00" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="5"   y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Jan</text>
+        <text x="48"  y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Fév</text>
+        <text x="91"  y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Mar</text>
+        <text x="134" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Avr</text>
+        <text x="177" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Mai</text>
+        <text x="220" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Jun</text>
+        <text x="263" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Jul</text>
+        <text x="306" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Aoû</text>
+        <text x="349" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Sep</text>
+        <text x="392" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Oct</text>
+        <text x="435" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Nov</text>
+        <text x="478" y="115" fill="#7A80A0" font-size="7.5" font-family="DM Sans">Déc</text>
+      </svg>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⭐ <span>Satisfaction & Versements par Segment</span></div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Segment</th><th>Satisfaction</th><th>Versements</th><th>Nb articles</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt; 8.5€</td><td>⭐ 4.18</td><td><span class="badge badge-blue">41%</span></td><td>42 383</td></tr>
+          <tr><td>8.5–25.5€</td><td>⭐ 4.22</td><td><span class="badge badge-orange">54%</span></td><td>31 787</td></tr>
+          <tr><td>25.5–51€</td><td>⭐ 4.24</td><td><span class="badge badge-orange">68%</span></td><td>15 893</td></tr>
+          <tr><td>51–85€</td><td>⭐ 4.19</td><td><span class="badge badge-red">79%</span></td><td>10 596</td></tr>
+          <tr><td>&gt; 85€</td><td>⭐ 4.15</td><td><span class="badge badge-red">88%</span></td><td>5 298</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PAGE 3 — ÉLASTICITÉ & RECOMMANDATIONS                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-2">
+
+  <div class="filters">
+    <span class="filter-label">TYPE :</span>
+    <div class="filter-chip active">Toutes catégories</div>
+    <div class="filter-chip" style="border-color:var(--red);color:var(--red)">Élastiques</div>
+    <div class="filter-chip" style="border-color:var(--green);color:var(--green)">Inélastiques</div>
+    <div class="filter-chip active" style="margin-left:8px">Significatives seulement</div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi" style="--accent:var(--red)">
+      <div class="kpi-label">Catégories Élastiques</div>
+      <div class="kpi-value" style="color:var(--red)">4</div>
+      <div class="kpi-delta">Levier volume — baisser les prix</div>
+    </div>
+    <div class="kpi" style="--accent:var(--green)">
+      <div class="kpi-label">Catégories Inélastiques</div>
+      <div class="kpi-value" style="color:var(--green)">7</div>
+      <div class="kpi-delta">Levier marge — hausse possible</div>
+    </div>
+    <div class="kpi" style="--accent:var(--orange)">
+      <div class="kpi-label">Gain CA Estimé (+10%)</div>
+      <div class="kpi-value" style="color:var(--orange)">+38 k€</div>
+      <div class="kpi-delta">Sur catégories inélastiques</div>
+    </div>
+    <div class="kpi" style="--accent:var(--muted)">
+      <div class="kpi-label">Non Significatives</div>
+      <div class="kpi-value" style="color:var(--muted)">4</div>
+      <div class="kpi-delta">Données insuffisantes</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📐 <span>Élasticité-Prix par Catégorie</span></div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:10px;display:flex;gap:16px">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:4px;background:var(--red);border-radius:2px;display:inline-block"></span>Élastique (e &lt; -1)</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:4px;background:var(--green);border-radius:2px;display:inline-block"></span>Inélastique</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:4px;background:#ccc;border-radius:2px;display:inline-block"></span>Non sig.</span>
+      </div>
+      <!-- Waterfall elasticity chart -->
+      <div id="elast-chart">
+        <div class="elast-row"><div class="elast-cat">Musical Instruments</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:30%;background:var(--red);left:auto"></div></div><div class="elast-val" style="color:var(--red)">-1.82</div></div>
+        <div class="elast-row"><div class="elast-cat">Cool Stuff</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:24%;background:var(--red);left:auto"></div></div><div class="elast-val" style="color:var(--red)">-1.47</div></div>
+        <div class="elast-row"><div class="elast-cat">Computers Access.</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:21%;background:var(--red);left:auto"></div></div><div class="elast-val" style="color:var(--red)">-1.26</div></div>
+        <div class="elast-row"><div class="elast-cat">Telephony</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:18%;background:var(--red);left:auto"></div></div><div class="elast-val" style="color:var(--red)">-1.10</div></div>
+        <div class="elast-row"><div class="elast-cat">Sports Leisure</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:14%;background:var(--green);left:auto"></div></div><div class="elast-val" style="color:var(--green)">-0.85</div></div>
+        <div class="elast-row"><div class="elast-cat">Health Beauty</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:11%;background:var(--green);left:auto"></div></div><div class="elast-val" style="color:var(--green)">-0.66</div></div>
+        <div class="elast-row"><div class="elast-cat">Watches Gifts</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:9%;background:var(--green);left:auto"></div></div><div class="elast-val" style="color:var(--green)">-0.54</div></div>
+        <div class="elast-row"><div class="elast-cat">Furniture Decor</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:7%;background:var(--green);left:auto"></div></div><div class="elast-val" style="color:var(--green)">-0.41</div></div>
+        <div class="elast-row"><div class="elast-cat">Bed Bath Table</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:5%;background:var(--green);left:auto"></div></div><div class="elast-val" style="color:var(--green)">-0.28</div></div>
+        <div class="elast-row"><div class="elast-cat">Toys</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="right:50%;width:4%;background:var(--green);left:auto"></div></div><div class="elast-val" style="color:var(--green)">-0.21</div></div>
+        <div class="elast-row"><div class="elast-cat">Baby</div><div class="elast-track"><div class="elast-zero"></div><div class="elast-bar" style="left:50%;width:4%;background:var(--blue)"></div></div><div class="elast-val" style="color:var(--blue)">+0.18</div></div>
+        <div class="elast-row"><div class="elast-cat">Garden Tools</div><div class="elast-track"><div class="elast-zero"></div></div><div class="elast-val" style="color:var(--muted)">*ns</div></div>
+        <div class="elast-row"><div class="elast-cat">Auto</div><div class="elast-track"><div class="elast-zero"></div></div><div class="elast-val" style="color:var(--muted)">*ns</div></div>
+      </div>
+    </div>
+
+    <!-- Heatmap simulation -->
+    <div class="card">
+      <div class="card-title">🎯 <span>Simulation : Impact CA selon Δ Prix</span></div>
+      <div class="heatmap-wrap">
+        <table class="heatmap-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Catégorie</th>
+              <th>-20%</th><th>-10%</th><th>-5%</th><th>+5%</th><th>+10%</th><th>+20%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="font-size:10px;padding:4px 6px;color:var(--text)">Musical Instr.</td>
+              <td class="hm-pos-hi">+17%</td><td class="hm-pos-mid">+7%</td><td class="hm-pos-low">+3%</td>
+              <td class="hm-neg-low">-4%</td><td class="hm-neg-mid">-8%</td><td class="hm-neg-hi">-19%</td></tr>
+            <tr><td style="font-size:10px;padding:4px 6px;color:var(--text)">Cool Stuff</td>
+              <td class="hm-pos-hi">+11%</td><td class="hm-pos-mid">+5%</td><td class="hm-pos-low">+2%</td>
+              <td class="hm-neg-low">-3%</td><td class="hm-neg-mid">-5%</td><td class="hm-neg-hi">-13%</td></tr>
+            <tr><td style="font-size:10px;padding:4px 6px;color:var(--text)">Sports Leisure</td>
+              <td class="hm-neg-low">-3%</td><td class="hm-neg-low">-2%</td><td class="hm-zero">0%</td>
+              <td class="hm-pos-low">+1%</td><td class="hm-pos-low">+2%</td><td class="hm-pos-mid">+3%</td></tr>
+            <tr><td style="font-size:10px;padding:4px 6px;color:var(--text)">Health Beauty</td>
+              <td class="hm-neg-low">-5%</td><td class="hm-neg-low">-3%</td><td class="hm-neg-low">-1%</td>
+              <td class="hm-pos-low">+2%</td><td class="hm-pos-mid">+3%</td><td class="hm-pos-mid">+7%</td></tr>
+            <tr><td style="font-size:10px;padding:4px 6px;color:var(--text)">Watches Gifts</td>
+              <td class="hm-neg-low">-6%</td><td class="hm-neg-low">-3%</td><td class="hm-neg-low">-2%</td>
+              <td class="hm-pos-low">+2%</td><td class="hm-pos-mid">+5%</td><td class="hm-pos-mid">+9%</td></tr>
+            <tr><td style="font-size:10px;padding:4px 6px;color:var(--text)">Bed Bath Table</td>
+              <td class="hm-neg-low">-8%</td><td class="hm-neg-low">-4%</td><td class="hm-neg-low">-2%</td>
+              <td class="hm-pos-low">+2%</td><td class="hm-pos-mid">+5%</td><td class="hm-pos-hi">+11%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--muted)">
+        🟩 Hausse de CA &nbsp;|&nbsp; 🟥 Baisse de CA &nbsp;|&nbsp; Résultats sur catégories significatives uniquement
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommandations table -->
+  <div class="card">
+    <div class="card-title">💡 <span>Recommandations Pricing</span></div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Catégorie</th><th>Élasticité</th><th>R²</th><th>Type</th><th>Recommandation</th><th>Gain CA estimé (+10%)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Bed Bath Table</td><td style="font-family:'DM Mono',monospace">-0.28</td><td>0.71</td><td><span class="badge badge-green">Inélastique</span></td><td>Hausse de prix possible</td><td style="color:var(--green);font-weight:600">+11 k€</td></tr>
+        <tr><td>Watches Gifts</td><td style="font-family:'DM Mono',monospace">-0.54</td><td>0.65</td><td><span class="badge badge-green">Inélastique</span></td><td>Hausse de prix possible</td><td style="color:var(--green);font-weight:600">+9 k€</td></tr>
+        <tr><td>Health Beauty</td><td style="font-family:'DM Mono',monospace">-0.66</td><td>0.58</td><td><span class="badge badge-green">Inélastique</span></td><td>Hausse de prix possible</td><td style="color:var(--green);font-weight:600">+7 k€</td></tr>
+        <tr><td>Musical Instr.</td><td style="font-family:'DM Mono',monospace">-1.82</td><td>0.80</td><td><span class="badge badge-red">Élastique</span></td><td>Baisser le prix = +volume</td><td style="color:var(--muted)">N/A</td></tr>
+        <tr><td>Computers</td><td style="font-family:'DM Mono',monospace">-1.26</td><td>0.72</td><td><span class="badge badge-red">Élastique</span></td><td>Baisser le prix = +volume</td><td style="color:var(--muted)">N/A</td></tr>
+        <tr><td>Baby</td><td style="font-family:'DM Mono',monospace">+0.18</td><td>0.42</td><td><span class="badge badge-blue">Veblen</span></td><td>Vérifier cohérence données</td><td style="color:var(--muted)">—</td></tr>
+        <tr><td>Garden Tools</td><td style="font-family:'DM Mono',monospace">—</td><td>0.12</td><td><span class="badge badge-gray">Non sig.</span></td><td>Données insuffisantes</td><td style="color:var(--muted)">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  Olist Pricing Intelligence · Données simulées à partir du dataset
+  <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" target="_blank">Olist Brazilian E-commerce (Kaggle)</a>
+  · Palette Okabe-Ito · Design inclusif
+</div>
+
+<script>
+  function showPage(i) {
+    document.querySelectorAll('.page').forEach((p,j) => p.classList.toggle('active', i===j));
+    document.querySelectorAll('.tab').forEach((t,j)  => t.classList.toggle('active', i===j));
+  }
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.addEventListener('click', function() {
+      // Toggle dans le même groupe de filtres (enfants du même parent)
+      const siblings = this.parentElement.querySelectorAll('.filter-chip');
+      siblings.forEach(s => { if(s !== this) s.classList.remove('active'); });
+      this.classList.toggle('active');
+    });
+  });
+</script>
+</body>
+</html>
