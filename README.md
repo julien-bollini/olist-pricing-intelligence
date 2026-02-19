@@ -29,7 +29,7 @@ Ce projet simule la mission d'un **Pricing Analyst** au sein d'un e-commerce mul
 
 ## 📊 Aperçu du Dashboard
 
-> 👉 [Voir la maquette interactive](outputs/dashboard_mockup.html) — s'ouvre directement dans le navigateur.
+> 👉 [Voir la maquette interactive](https://julien-bollini.github.io/olist-pricing-intelligence/outputs/dashboard_mockup.html) — s'ouvre directement dans le navigateur.
 
 | Page | Contenu |
 |---|---|
